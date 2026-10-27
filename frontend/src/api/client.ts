@@ -111,23 +111,6 @@ async function request<T>(
       throw new ApiError(message, response.status, requestId, body);
     }
 
-    export function getAuthStatus(): Promise<ApiResult<AuthStatus>> {
-      return request("/auth/status");
-    }
-
-    export async function verifyCredentials(
-      username: string,
-      password: string,
-    ): Promise<ApiResult<{ status: "authenticated" }>> {
-      setApiCredentials(username, password);
-      try {
-        return await request("/auth/verify");
-      } catch (error) {
-        clearApiCredentials();
-        throw error;
-      }
-    }
-
     return { data: body as T, status: response.status, requestId };
   } catch (error) {
     if (error instanceof ApiError) throw error;
@@ -143,6 +126,23 @@ async function request<T>(
     );
   } finally {
     window.clearTimeout(timeout);
+  }
+}
+
+export function getAuthStatus(): Promise<ApiResult<AuthStatus>> {
+  return request("/auth/status");
+}
+
+export async function verifyCredentials(
+  username: string,
+  password: string,
+): Promise<ApiResult<{ status: "authenticated" }>> {
+  setApiCredentials(username, password);
+  try {
+    return await request("/auth/verify");
+  } catch (error) {
+    clearApiCredentials();
+    throw error;
   }
 }
 
