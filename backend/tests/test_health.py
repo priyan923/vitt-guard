@@ -29,6 +29,24 @@ def test_liveness_does_not_require_database() -> None:
     assert response.headers["Cache-Control"] == "no-store"
 
 
+def test_root_returns_api_links() -> None:
+    response = request_health("/")
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "name": "Vitt Guard API",
+        "health": "/health/live",
+        "docs": "/docs",
+    }
+
+
+def test_favicon_returns_no_content() -> None:
+    response = request_health("/favicon.ico")
+
+    assert response.status_code == 204
+    assert not response.content
+
+
 def test_liveness_does_not_attempt_optional_database_logging(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:

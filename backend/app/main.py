@@ -7,7 +7,7 @@ from uuid import UUID, uuid4
 
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from sqlalchemy import text
 from sqlalchemy.exc import OperationalError, SQLAlchemyError
 from starlette.concurrency import run_in_threadpool
@@ -117,6 +117,22 @@ app = FastAPI(
     lifespan=lifespan,
 )
 app.include_router(router)
+
+
+@app.get("/", tags=["health"], include_in_schema=False)
+def root() -> dict[str, str]:
+    return {
+        "name": "Vitt Guard API",
+        "health": "/health/live",
+        "docs": "/docs",
+    }
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon() -> Response:
+    return Response(status_code=204)
+
+
 app.add_middleware(
     RequestSizeLimitMiddleware,
     maximum_bytes=settings.max_request_body_bytes,

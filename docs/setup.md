@@ -21,6 +21,20 @@ The `.env.example` file contains placeholders only. Copy it to `.env` and
 replace every `REPLACE_ME` value with local-only values before starting Compose.
 Never add `.env` or production secrets to Git.
 
+## Vercel deployment
+
+Deploy the backend and frontend as separate Vercel projects. For the backend
+project, set the Vercel Root Directory to `backend`; its `pyproject.toml`
+declares the FastAPI entrypoint as `app.main:app`. Configure the backend's
+production environment variables in Vercel, including `DATABASE_URL`,
+`APP_ENV=production`, `AUTH_ENABLED=true`, `AUTH_USERNAME`, `AUTH_PASSWORD`,
+and `CORS_ALLOWED_ORIGINS` set to the frontend's exact HTTPS origin.
+
+For the frontend project, set the Root Directory to `frontend` and configure
+`VITE_API_BASE_URL` to the deployed backend origin (for example,
+`https://vitt-guard-api.vercel.app`). This value is public and must not contain
+credentials. Redeploy after changing environment variables or project settings.
+
 ## Database and migrations
 
 The `db` Compose service stores PostgreSQL data in a named Docker volume and
